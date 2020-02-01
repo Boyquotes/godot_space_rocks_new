@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scripts/player.gd" type="Script" id=1]
+[ext_resource path="res://scenes/bullet.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/img/bgspeedship.png" type="Texture" id=3]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 26.5234
+
+[node name="player" type="RigidBody2D"]
+linear_damp = 1.0
+angular_damp = 5.0
+script = ExtResource( 1 )
+engine_thrust = 500
+spin_thrust = 10000
+fire_rate = 0.25
+bullet = ExtResource( 2 )
+
+[node name="player_spr" type="Sprite" parent="."]
+rotation = 1.5708
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 3 )
+
+[node name="player_coll" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="muzzle" type="Position2D" parent="."]
+position = Vector2( 40, 0 )
+
+[node name="gun_timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+[connection signal="timeout" from="gun_timer" to="." method="_on_gun_timer_timeout"]

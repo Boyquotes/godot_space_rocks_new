@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/expl2.wav-9f09570b19852772e5b3292d9762ed80.sample"
+
+[deps]
+
+source_file="res://assets/snd/expl2.wav"
+dest_files=[ "res://.import/expl2.wav-9f09570b19852772e5b3292d9762ed80.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=true
+edit/normalize=true
+edit/loop=false
+compress/mode=0
