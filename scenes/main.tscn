@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://scenes/rock.tscn" type="PackedScene" id=2]
-[ext_resource path="res://assets/img/space_background_2.jpg" type="Texture" id=3]
-[ext_resource path="res://scenes/player.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/enemy.tscn" type="PackedScene" id=3]
+[ext_resource path="res://assets/img/space_background_2.jpg" type="Texture" id=4]
+[ext_resource path="res://scenes/player.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scenes/HUD.tscn" type="PackedScene" id=6]
 
 [sub_resource type="Curve2D" id=1]
 _data = {
@@ -11,14 +13,16 @@ _data = {
 }
 
 [node name="main" type="Node"]
+pause_mode = 2
 script = ExtResource( 1 )
 rock = ExtResource( 2 )
+enemy = ExtResource( 3 )
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 539.541, 303.136 )
-texture = ExtResource( 3 )
+texture = ExtResource( 4 )
 
-[node name="player" parent="." instance=ExtResource( 4 )]
+[node name="player" parent="." instance=ExtResource( 5 )]
 position = Vector2( 512, 300 )
 
 [node name="rocks_path" type="Path2D" parent="."]
@@ -29,4 +33,13 @@ position = Vector2( -0.412003, -0.319649 )
 rotation = -7.61578e-009
 
 [node name="rocks" type="Node" parent="."]
+
+[node name="HUD" parent="." instance=ExtResource( 6 )]
+
+[node name="enemy_timer" type="Timer" parent="."]
+one_shot = true
+[connection signal="dead" from="player" to="." method="_on_player_dead"]
+[connection signal="lives_changed" from="player" to="HUD" method="update_lives"]
 [connection signal="shoot" from="player" to="." method="_on_player_shoot"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
+[connection signal="timeout" from="enemy_timer" to="." method="_on_enemy_timer_timeout"]

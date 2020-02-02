@@ -27,5 +27,6 @@ shape = SubResource( 1 )
 position = Vector2( -1.53274, -0.485298 )
 rotation = 1.5708
 scale = Vector2( 0.530876, 2.60918 )
+[connection signal="area_entered" from="." to="." method="_on_bullet_area_entered"]
 [connection signal="body_entered" from="." to="." method="_on_bullet_body_entered"]
 [connection signal="screen_exited" from="bullet_visibilty" to="." method="_on_bullet_visibilty_screen_exited"]
