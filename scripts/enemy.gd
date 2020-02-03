@@ -1,6 +1,7 @@
 extends Area2D
 
 signal shoot
+signal update_score_on_enemy_destroyed
 
 export (PackedScene) var bullet
 export (int) var speed = 150
@@ -8,7 +9,6 @@ export (int) var health = 3
 
 var follow 
 var target = null
-
 
 func shoot():
 	var dir = target.global_position - global_position
@@ -27,6 +27,7 @@ func take_damage(amount):
 	health -= amount
 	$enemy_animation_player.play("flash")
 	if health <= 0:
+		emit_signal("update_score_on_enemy_destroyed")
 		explode()
 	yield($enemy_animation_player, 'animation_finished')
 	$enemy_animation_player.play("rotation")
@@ -39,7 +40,6 @@ func explode():
 	$enemy_spr.hide()
 	$explosion.show()
 	$explosion/explosion_animation.play("explosion")
-	# add explosion sound!!!
 	$enemy_explosion_sound.play()
 
 
@@ -72,4 +72,5 @@ func _on_enemy_body_entered(body):
 	# to player and asteroid's collision
 	if body.name == 'player':
 		body.shield -= 50
-		explode()
+	explode()
+

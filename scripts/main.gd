@@ -7,6 +7,13 @@ var screensize = Vector2()
 var level = 0
 var score = 0
 var playing = false
+var asteroid_relation = {.5:'big',
+							.25:'medium',
+							.125:'small'}
+var asteroid_points = {'big':10,
+						'medium':20,
+						'small':40}
+var enemy_destroyed_score = 50
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -84,6 +91,9 @@ func _on_player_shoot(bullet, pos, dir):
 
 
 func _on_rock_exploded(size, radius, pos, vel):
+	# we compute the score
+	score += asteroid_points[asteroid_relation[size]]
+	$HUD.update_score(score)
 	if size <= .125:
 		return
 	for offset in [-1, 1]:
@@ -92,6 +102,10 @@ func _on_rock_exploded(size, radius, pos, vel):
 		var newvel = dir * vel.length() * 1.1
 		spawn_rocks(size * .5, newpos, newvel) 
 
+
+func _on_enemy_destroyed():
+	score += enemy_destroyed_score
+	$HUD.update_score(score)
 
 func _on_player_dead():
 	game_over()
@@ -102,5 +116,6 @@ func _on_enemy_timer_timeout():
 	add_child(e)
 	e.target = $player
 	e.connect('shoot', self, '_on_player_shoot')
+	e.connect('update_score_on_enemy_destroyed', self, "_on_enemy_destroyed")
 	$enemy_timer.wait_time = rand_range(20, 40)
 	$enemy_timer.start()
