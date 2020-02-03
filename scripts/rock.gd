@@ -40,6 +40,7 @@ func explode():
 	$rock_spr.hide()
 	$explosion.show()
 	$explosion/explosion_animation.play("explosion")
+	$rock_explosion_sound.play()
 	emit_signal("explode", size, radius, position, linear_velocity)
 	linear_velocity = Vector2()
 	angular_velocity = 0
@@ -47,3 +48,4 @@ func explode():
 
 func _on_explosion_animation_animation_finished(anim_name):
 	queue_free()
+

@@ -1,9 +1,13 @@
 extends RigidBody2D
 
+
+signal shield_changed
 signal shoot
 signal lives_changed
 signal dead
 
+export (int) var max_shield = 100
+export (float) var shield_regen = 5
 export (int) var engine_thrust
 export (int) var spin_thrust
 export (float) var fire_rate
@@ -17,6 +21,16 @@ var rotation_dir = 0
 var screen_size = Vector2()
 var can_shoot = true
 var lives = 0 setget set_lives
+var shield = 0 setget set_shield
+
+
+func set_shield(value):
+	if value > max_shield:
+		value = max_shield
+	shield = value
+	emit_signal("shield_changed", shield)
+	if shield <= 0:
+		self.lives -= 1
 
 func _ready():
 	screen_size = get_viewport().get_visible_rect().size
@@ -28,11 +42,13 @@ func start():
 	$player_spr.show()
 	self.lives = 3
 	change_state(ALIVE)
+	self.shield = max_shield
 
 
 func set_lives(value):
 	lives = value
 	emit_signal('lives_changed', lives)
+	self.shield = max_shield
 
 
 func change_state(new_state):
@@ -57,6 +73,7 @@ func change_state(new_state):
 
 func _process(delta):
 	get_input()
+	self.shield += shield_regen * delta
 
 
 func shoot():
@@ -65,15 +82,18 @@ func shoot():
 	emit_signal("shoot", bullet, $muzzle.global_position, rotation)
 	can_shoot = false
 	$gun_timer.start()
+	$laser_sound.play()
 
 
 func get_input():
+	$player_exhaust.emitting = false
 	thrust = Vector2()
 	if player_state in [DEAD, INIT]:
 		return
 	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
 	if Input.is_action_pressed("thrust"):
+		$player_exhaust.emitting = true
 		thrust = Vector2(engine_thrust, 0)
 	rotation_dir = 0
 	if Input.is_action_pressed("rotate_left"):
@@ -113,10 +133,10 @@ func _on_explosion_animation_animation_finished(anim_name):
 
 func _on_player_body_entered(body):
 	if body.is_in_group('rocks'):
+		self.shield -= body.size * 30
 		body.explode()
 		$explosion.show()
 		$explosion/explosion_animation.play("explosion")
-		self.lives -= 1
 		if self.lives <= 0:
 			change_state(DEAD)
 		else:

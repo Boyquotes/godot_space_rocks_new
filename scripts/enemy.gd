@@ -14,6 +14,7 @@ func shoot():
 	var dir = target.global_position - global_position
 	dir = dir.rotated(rand_range(-.1, .1)).angle()
 	emit_signal("shoot", bullet, global_position, dir)
+	$enemy_shoot_sound.play()
 
 
 func shoot_pulse(n, delay):
@@ -39,10 +40,12 @@ func explode():
 	$explosion.show()
 	$explosion/explosion_animation.play("explosion")
 	# add explosion sound!!!
+	$enemy_explosion_sound.play()
 
 
 func _ready():
 	$enemy_spr.frame = randi() % 3
+	$enemy_animation_player.play("rotation")
 	var path = $enemy_path.get_children()[randi() % $enemy_path.get_child_count()]
 	follow = PathFollow2D.new()
 	path.add_child(follow)
@@ -65,6 +68,8 @@ func _on_gun_timer_timeout():
 
 
 func _on_enemy_body_entered(body):
+	# TODO see if enemy is invulnerable
+	# to player and asteroid's collision
 	if body.name == 'player':
-		pass
-	explode()
+		body.shield -= 50
+		explode()

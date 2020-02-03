@@ -13,8 +13,6 @@ func _ready():
 	randomize()
 	screensize = get_viewport().get_visible_rect().size
 	$player.screen_size = screensize
-	for i in range(3):
-		spawn_rocks(.5)
 
 
 func _input(event):
@@ -31,6 +29,7 @@ func _input(event):
 
 
 func new_game():
+	$music_sound.play()
 	for rock in $rocks.get_children():
 		rock.queue_free()
 	level = 0
@@ -60,6 +59,7 @@ func _process(delta):
 
 
 func game_over():
+	$music_sound.stop()
 	playing = false
 	$HUD.game_over()
 
